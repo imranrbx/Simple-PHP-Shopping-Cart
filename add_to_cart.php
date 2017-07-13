@@ -1,5 +1,10 @@
 <?php
+require "vendor/autoload.php";
 require('db.php');
+use voku\Cart\Cart;
+use voku\Cart\Storage\Session;
+use voku\Cart\Identifier\Cookie;
+$cart = new Cart(new Session, new Cookie);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -84,46 +89,54 @@ require('db.php');
 	</head>
 	<body>
 		<?php
-			if(isset($_GET['id'])):
-				$result = $conn->query("SELECT * FROM products WHERE id = ". $_GET['id']);
-				$row = $result->fetch_object();
-				$add_new = true;
-				if(isset($_SESSION['cart']) AND count($_SESSION['cart']) > 0){
-					foreach($_SESSION['cart'] as $key => $val){
-						if($val->id == $_GET['id']){
-							$_SESSION['cart'][$key]->quantity++;
-							$add_new = false;
-							break;
-						}
-					}
+		if (isset($_REQUEST['id'])):
+			$result = $conn->query('select * from products where id = ' . $_REQUEST['id']);
+
+			if($result->num_rows > 0){
+				
+			while($row = $result->fetch_object()){
+				 if(isset($_POST['update'])):
+						$cart->update($_POST['identifier'], 'quantity', $_POST['quantity']);
+				else:
+					$cart->insert(array(
+							'id' => $row->id,
+							'name' => $row->name,
+							'quantity' => (isset($_REQUEST['quantity'])) ? $_REQUEST['quantity'] : 1,
+							'price' => $row->price,
+						));
+				endif;
 				}
-				if($add_new == true){
-					$row->quantity = 1;
-					$_SESSION['cart'][] = $row;
-				}
-			endif;
+			
+			}else{
+				echo "No Products Found";
+				die();
+			}
+		endif;
 		?>
 		<div class="container">
 			<div class="row">
 				<div class="col-sm-6 col-sm-offset-3">
 					<table class="table table-condensed rwd-table">
 						<?php
-						$cart = $_SESSION['cart'];
+						
 						if(! empty($cart)): ?>
 						<tr>
 							<th>Name</th>
 							<th>Price</th>
+							<th>Total</th>
 							<th>Qty</th>
 							<th>Action</th>
 						</tr>
-						<?php foreach($cart as $key=>$val){
+						<?php foreach($cart->contents() as $val){
+							$total = $val->price * $val->quantity;
 							echo "<tr>";
-								echo "<td data-th='Name'> {$val->name} </td>";
-								echo "<td data-th='Price'> {$val->price} </td>";
-										echo "<td data-th='Qty'><div class='form-group'><input class='form-control' type='number' value= '{$val->quantity}' name='qty'/><a class='btn btn-primary form-control' href='update_cart.php?id={$val->id}'>Update</a></div> </td>";
-								echo "<td data-th='Action'> <a class='btn btn-danger' href='delete_cart.php?id={$val->id}'>Delete</a></td>";
+									echo "<td data-th='Name'> {$val->name} </td><td data-th='Name'> {$val->price} </td>";
+									echo "<td data-th='Price'> {$total} </td>";
+											echo "<td data-th='Qty'><form method='POST' clas='form-horizontal'><input type='hidden' name='id' value='{$val->id}' /><input type='hidden' name='identifier' value='{$val->identifier}' /><input type='number' class='form-control' value='{$val->quantity}' name='quantity' /><input class='form-control btn btn-info' type='submit' value='Update' name='update' /></form></td>";
+									echo "<td data-th='Action'> <a onclick='return delete_item()' class='btn btn-danger' href='delete_cart.php?id={$val->id}'>Delete</a></td>";
 											echo "</tr>";
 						}
+						echo "<tr colspan='4'><td></td><td></td><td></td><td style='text-align:right;' ><strong>Total Amount: </strong></td><td>{$cart->total()}</td></tr>";
 						else:
 							unset($_SESSION['cart']);
 							echo "<tr><td>Your Cart is Empty.</td></tr>";
@@ -142,5 +155,15 @@ require('db.php');
 		<script src="https://code.jquery.com/jquery.js"></script>
 		<!-- Bootstrap JavaScript -->
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+		<script type="text/javascript">
+				function delete_item(){
+					var item = confirm("Are You Sure You want to Remove this item?");
+					if(item){
+						return true;
+					}else{
+						return false;
+					}
+				}
+		</script>
 	</body>
 </html>

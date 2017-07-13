@@ -1,13 +1,19 @@
-<?php
-include "db.php";
-?>
+<?php require("db.php"); ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="">
 	<head>
-		<meta charset="UTF-8">
-		<title>Document</title>
-		<!-- Latest compiled and minified CSS -->
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Title Page</title>
+		<!-- Bootstrap CSS -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+		<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+		<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+		<!--[if lt IE 9]>
+		<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.2/html5shiv.min.js"></script>
+		<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
 		<style type="text/css">
 			
 			.rwd-table {
@@ -75,11 +81,11 @@ include "db.php";
 		</style>
 	</head>
 	<body>
-		<div class="container">
-			<div class="row">
-				<div class="col-md-10 col-md-offset-1">
+		<div class='container'>
+			<div class='row'>
+				<div class='col-sm-8 col-sm-offset-2'>
 					
-					<table class='table rwd-table'>
+					<table class='table table-condensed rwd-table'>
 						
 						<tr>
 							<th > Product Name </th>
@@ -107,5 +113,9 @@ include "db.php";
 				</div>
 			</div>
 		</div>
+		<!-- jQuery -->
+		<script src="https://code.jquery.com/jquery.js"></script>
+		<!-- Bootstrap JavaScript -->
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 	</body>
 </html>
