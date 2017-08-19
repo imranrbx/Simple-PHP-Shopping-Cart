@@ -1,9 +1,11 @@
 <?php
 require "vendor/autoload.php";
 require('db.php');
+
 use voku\Cart\Cart;
 use voku\Cart\Storage\Session;
 use voku\Cart\Identifier\Cookie;
+
 $cart = new Cart(new Session, new Cookie);
 ?>
 <!DOCTYPE html>
@@ -12,7 +14,7 @@ $cart = new Cart(new Session, new Cookie);
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>Title Page</title>
+		<title>Cart Page</title>
 		<!-- Bootstrap CSS -->
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
 		<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -90,6 +92,7 @@ $cart = new Cart(new Session, new Cookie);
 	<body>
 		<?php
 		if (isset($_REQUEST['id'])):
+			
 			$result = $conn->query('select * from products where id = ' . $_REQUEST['id']);
 
 			if($result->num_rows > 0){
@@ -138,7 +141,7 @@ $cart = new Cart(new Session, new Cookie);
 						}
 						echo "<tr colspan='4'><td></td><td></td><td></td><td style='text-align:right;' ><strong>Total Amount: </strong></td><td>{$cart->total()}</td></tr>";
 						else:
-							unset($_SESSION['cart']);
+							$cart->destroy();
 							echo "<tr><td>Your Cart is Empty.</td></tr>";
 						endif;
 						?>
